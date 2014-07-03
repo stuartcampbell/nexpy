@@ -18,7 +18,7 @@ disown ${DAEMON_PID}
 shutdown()
 {
   PID=$1
-  echo "Killing: ${PID}"
+  # echo "Killing: ${PID}"
   # kill ${PID}
   sleep 1
   # kill -s KILL ${PID}
@@ -36,7 +36,8 @@ fi
 echo "URI: ${URI}"
 
 # Start client
-${CLIENT} ${URI} f2.nxs
+${CLIENT} ${URI} f.nxs
+sleep 2
 
 # Shut down
 shutdown ${DAEMON_PID}

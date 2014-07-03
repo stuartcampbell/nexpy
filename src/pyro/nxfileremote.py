@@ -3,11 +3,16 @@
 import Pyro4
 import sys
 import threading
+import time
 
 from nexpy.api.nexus import NXFile
 
 def message(msg):
     print("pyro server: " + msg)
+
+def shutdown():
+    time.sleep(1)
+    daemon.shutdown()
 
 class NXFileRemote:
     name = ""
@@ -28,9 +33,7 @@ class NXFileRemote:
         pass 
     
     def exit(self,code):
-        print "Daemon exiting..."
-        def shutdown():
-            daemon.shutdown()
+        message("Daemon exiting...")
         thread = threading.Thread(target=shutdown)
         thread.setDaemon(True)
         thread.start()
@@ -48,4 +51,4 @@ sys.stdout.flush()
 
 # Start the event loop of the server to wait for calls
 daemon.requestLoop()
-print("Daemon exited.")
+message("Daemon exited.")
