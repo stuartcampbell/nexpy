@@ -6,9 +6,27 @@ import threading
 
 from nexpy.api.nexus import NXFile
 
-class NXFileRemote(NXFile):
-    def initfile(self,name):
-        print("Initializing NXFileRemote: " + name)
+def message(msg):
+    print("pyro server: " + msg)
+
+class NXFileRemote:
+    name = ""
+    nexusFile = None
+
+    def initfile(self, name):
+        message("Initializing NXFileRemote: " + name)
+        self.name = name
+        try: 
+            self.nexusFile = NXFile(name, 'r')
+        except Exception as e:
+            message("Caught exception while opening: " + name)
+            message("Exception message: " + str(e))
+            return False
+        return True
+         
+    def getentries(self):
+        pass 
+    
     def exit(self,code):
         print "Daemon exiting..."
         def shutdown():
@@ -17,7 +35,7 @@ class NXFileRemote(NXFile):
         thread.setDaemon(True)
         thread.start()
 
-nxfileremote = NXFileRemote("f.nxs")
+nxfileremote = NXFileRemote()
 
 # Make an empty Pyro daemon
 daemon = Pyro4.Daemon()

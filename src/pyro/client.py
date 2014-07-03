@@ -22,5 +22,12 @@ fileremote = Pyro4.Proxy(uri)
 
 # Use proxy object normally
 print fileremote
-fileremote.initfile(name)
+try:
+    b = fileremote.initfile(name)
+except Exception as e:
+    print "Caught exception during remote file operations!"
+    print("Exception message: " + str(e))
+if not b:
+    print "Failed to open file!"
+    
 fileremote.exit(0)

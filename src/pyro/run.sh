@@ -35,10 +35,8 @@ then
 fi
 echo "URI: ${URI}"
 
-exit 0
-
 # Start client
-${CLIENT} ${URI} file.nxs
+${CLIENT} ${URI} f2.nxs
 
 # Shut down
 shutdown ${DAEMON_PID}
