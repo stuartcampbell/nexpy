@@ -1,8 +1,12 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
 
 NEXPYRO=$( cd $( dirname $0 ) ; /bin/pwd )
 DAEMON=${NEXPYRO}/nxfileremote.py
 CLIENT=${NEXPYRO}/client.py
+
+NEXPY_SRC=$( cd ${NEXPYRO}/.. ; /bin/pwd )
+
+export PYTHONPATH=${NEXPY_SRC}
 
 # Start daemon
 TMPFILE=$( mktemp )
