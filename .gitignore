@@ -48,3 +48,6 @@ Icon?
 .settings
 .project
 .pydevproject
+
+# Emacs backup files
+*~
