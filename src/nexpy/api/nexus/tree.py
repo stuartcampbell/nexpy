@@ -2292,6 +2292,9 @@ class NXgroup(NXobject):
     def _str_value(self,indent=0):
         return ""
 
+    def __getstate__(self):
+        return "NXGROUP"
+
     def walk(self):
         yield self
         for node in self.entries.values():
@@ -2914,6 +2917,13 @@ class NXroot(NXgroup):
     def __init__(self, *items, **opts):
         self._class = "NXroot"
         NXgroup.__init__(self, *items, **opts)
+
+    def __getstate__(self):
+        print "root.getstate()"
+        superState  = (super(self.__class__, self).__getstate__())
+        # = super.__getstate__()
+        print("superState: " + superState)
+        return [ "ROOT", superState ]
 
     def rename(self, name):
         self.nxname = name        

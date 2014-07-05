@@ -8,20 +8,25 @@ NEXPY_SRC=$( cd ${NEXPYRO}/.. ; /bin/pwd )
 
 export PYTHONPATH=${NEXPY_SRC}
 
+message()
+{
+  echo "run.sh: ${*}"
+}
+
 # Start daemon
 TMPFILE=$( mktemp )
 ( ${DAEMON} | tee ${TMPFILE} 2>&1 ) &
 DAEMON_PID=${!}
-echo "Daemon running: pid: ${DAEMON_PID}"
-disown ${DAEMON_PID}
+message "Daemon running: pid: ${DAEMON_PID}"
+# echo "DAEMON_PID: ${DAEMON_PID}"
 
-shutdown()
+shutdown_daemon()
 {
   PID=$1
-  # echo "Killing: ${PID}"
-  # kill ${PID}
+  echo "Killing: ${PID}"
+  kill ${PID}
   sleep 1
-  # kill -s KILL ${PID}
+  kill -s KILL ${PID}
 }
 
 # Obtain daemon URI
@@ -30,15 +35,17 @@ URI=$( grep "URI:" ${TMPFILE} | cut -d ' ' -f 2 )
 if [[ ${URI} != PYRO* ]]
 then
   echo "Daemon startup failed!"
-  shutdown ${DAEMON_PID}
+  shutdown_daemon ${DAEMON_PID}
   exit 1
 fi
 echo "URI: ${URI}"
 
 # Start client
-${CLIENT} ${URI} f.nxs
-sleep 2
+if ! ${CLIENT} ${URI} f2.nxs 
+then 
+  message "Client failed!"
+fi
 
-# Shut down
-shutdown ${DAEMON_PID}
+rm ${TMPFILE}
+wait
 exit 0

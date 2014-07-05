@@ -27,9 +27,16 @@ fileremote = Pyro4.Proxy(uri)
 message(fileremote)
 try:
     b = fileremote.initfile(name)
+    # n = fileremote.filename()
+    t = fileremote.tree()
+    message("tree: " + str(t))
+    # print("nxname: " + t.nxname)
+    # print("entry: " + fileremote.getitem("entry"))
+    # print("name="+n)
 except Exception as e:
     print "Caught exception during remote file operations!"
     print("Exception message: " + str(e))
+    b = False
     
 fileremote.exit(0)
 if b:

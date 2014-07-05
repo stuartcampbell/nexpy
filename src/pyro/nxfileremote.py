@@ -5,6 +5,7 @@ import sys
 import threading
 import time
 
+import nexpy.api.nexus as nx
 from nexpy.api.nexus import NXFile
 
 def message(msg):
@@ -28,9 +29,27 @@ class NXFileRemote:
             message("Exception message: " + str(e))
             return False
         return True
-         
+    
+    def getitem(self, key):
+        message("getitem")
+        t = nx.load(self.name)
+        message("t: " + str(t))
+        return str(t[key])
+    
+    def tree(self):
+        # return self.nexusFile.readfile()
+        t = nx.load(self.name)
+        # message("t: " + str(t))
+        print "t.tree..."
+        print "t.tree: " , str(t)
+        return t
+    
+    def filename(self):
+        return self.nexusFile.filename()
+    
     def getentries(self):
-        pass 
+        print(self.nexusFile.getentries())
+        return True
     
     def exit(self,code):
         message("Daemon exiting...")
