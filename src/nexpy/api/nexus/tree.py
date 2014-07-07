@@ -696,7 +696,7 @@ class NXattr(object):
             self._value, self._dtype, _ = _getvalue(value, dtype)
 
     def __str__(self):
-        return str(self.nxdata)
+        return "NXattr(%i): " % id(self) + str(self.nxdata)
 
     def __repr__(self):
         if self.dtype.type == np.string_:
@@ -2293,12 +2293,39 @@ class NXgroup(NXobject):
         return ""
 
     def __getstate__(self):
-        print "NXgroup.getstate()"
+        print ""
+        print "NXgroup.__getstate__() ..."
+        state = self.getstate(0)
+        print "NXgroup.__getstate__() done."
+        return state 
+ 
+    def spaces(self, spaces):
+        import sys
+        if (spaces >= 10):
+            print "Too many spaces!"
+            sys.exit(1)
+        for i in range(0, spaces):
+            sys.stdout.write(' ')
+ 
+    def getstate(self, depth):
+        self.spaces(depth)
+        print "NXgroup.getstate(%s,%i)" % (self.identity(),depth)
+        self.spaces(depth)
+        print "group: entries: ", len(self.entries.keys())     
         L = [ "NXGROUP" ]
-        for entry in self.entries.values():
-            print "entry: ", entry
-            L.add(entry.__getstate__())
+        for key in self.entries.keys():
+            self.spaces(depth)
+            print "group: key: ", key
+            self.spaces(depth)
+            print "group: id:  ", self.entries[key].identity()
+            state = self.entries[key].getstate(depth+1)
+            print "group: got state."
+            L.append(state)
+        print "group: done."
         return L
+
+    def identity(self):
+        return "NXgroup: " + str(id(self) % 1000) + " " + self.nxpath
 
     def walk(self):
         yield self
@@ -2924,10 +2951,11 @@ class NXroot(NXgroup):
         NXgroup.__init__(self, *items, **opts)
 
     def __getstate__(self):
-        print "root.getstate()"
+        print "NXroot.getstate(): " + str(id(self) % 1000)  
         superState  = (super(self.__class__, self).__getstate__())
+        print "root: got state"
         # = super.__getstate__()
-        print("superState: " + superState)
+        print("superState: " + str(superState))
         return [ "ROOT", superState ]
 
     def rename(self, name):
@@ -3271,9 +3299,12 @@ class NXdata(NXgroup):
             return result
 
     def __getstate__(self):
-        print "NXdata.getstate()"
+        return self.getstate(0)
+    
+    def getstate(self, depth):
+        self.spaces(depth)
+        print "NXdata.getstate(%i)" % depth
         return "NXdata"
-
 
 class NXmonitor(NXdata):
 
