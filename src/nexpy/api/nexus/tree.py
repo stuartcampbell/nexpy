@@ -2293,7 +2293,12 @@ class NXgroup(NXobject):
         return ""
 
     def __getstate__(self):
-        return "NXGROUP"
+        print "NXgroup.getstate()"
+        L = [ "NXGROUP" ]
+        for entry in self.entries.values():
+            print "entry: ", entry
+            L.add(entry.__getstate__())
+        return L
 
     def walk(self):
         yield self
@@ -3264,6 +3269,10 @@ class NXdata(NXgroup):
             if self.nxerrors: 
                 result.errors = self.errors / other
             return result
+
+    def __getstate__(self):
+        print "NXdata.getstate()"
+        return "NXdata"
 
 
 class NXmonitor(NXdata):
