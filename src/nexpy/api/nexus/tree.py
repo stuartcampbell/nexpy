@@ -2312,7 +2312,7 @@ class NXgroup(NXobject):
         print "NXgroup.getstate(%s,%i)" % (self.identity(),depth)
         self.spaces(depth)
         print "group: entries: ", len(self.entries.keys())     
-        L = [ "NXGROUP" ]
+        L = []
         for key in self.entries.keys():
             self.spaces(depth)
             print "group: key: ", key
@@ -2322,7 +2322,7 @@ class NXgroup(NXobject):
             print "group: got state."
             L.append(state)
         print "group: done."
-        return L
+        return [ "NXGROUP", self.nxname, L ]
 
     def identity(self):
         return "NXgroup: " + str(id(self) % 1000) + " " + self.nxpath
@@ -3304,7 +3304,7 @@ class NXdata(NXgroup):
     def getstate(self, depth):
         self.spaces(depth)
         print "NXdata.getstate(%i)" % depth
-        return "NXdata"
+        return "NXdata:"+ self.nxpath + str(self.nxsignal.shape)
 
 class NXmonitor(NXdata):
 
