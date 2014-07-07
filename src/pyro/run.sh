@@ -24,9 +24,9 @@ shutdown_daemon()
 {
   PID=$1
   echo "Killing: ${PID}"
-  kill ${PID}
+  kill ${PID} || true
   sleep 1
-  kill -s KILL ${PID}
+  kill -s KILL ${PID} || true 
 }
 
 # Obtain daemon URI
@@ -36,6 +36,8 @@ if [[ ${URI} != PYRO* ]]
 then
   echo "Daemon startup failed!"
   shutdown_daemon ${DAEMON_PID}
+  echo "contents of: ${TMPFILE}"
+  cat ${TMPFILE}
   exit 1
 fi
 echo "URI: ${URI}"
