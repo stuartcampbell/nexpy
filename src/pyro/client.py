@@ -29,8 +29,8 @@ b = True
 try:
     b = fileremote.initfile(name)
     # n = fileremote.filename()
-    # t = fileremote.tree()
-    # message("tree: " + str(t))
+    t = fileremote.tree()
+    message("tree: " + str(t))
     # print("nxname: " + t.nxname)
     # print("entry: " + fileremote.getitem("entry"))
     # print("name="+n)
