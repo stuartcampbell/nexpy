@@ -44,7 +44,8 @@ class NXFileRemote:
         # message("t: " + str(t))
         print "t.tree..."
         print "t.tree: " , str(t)
-        return array((1,2,3,4))
+        # return array((1,2,3,4))
+        return t
 
     def filename(self):
         return self.nexusFile.filename()

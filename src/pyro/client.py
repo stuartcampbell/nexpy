@@ -30,9 +30,10 @@ try:
     b = fileremote.initfile(name)
     # n = fileremote.filename()
     t = fileremote.tree()
-    message("tree: " + str(t))
-    # print("nxname: " + t.nxname)
-    # print("entry: " + fileremote.getitem("entry"))
+    message("t: " + str(t))
+    message("tree: " + t.tree)
+    print("nxname: " + t.nxname)
+    print("entry: " + fileremote.getitem("entry"))
     # print("name="+n)
     pass
 except Exception as e:
