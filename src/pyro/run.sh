@@ -8,6 +8,8 @@ NEXPY_SRC=$( cd ${NEXPYRO}/.. ; /bin/pwd )
 
 export PYTHONPATH=${NEXPY_SRC}
 
+FILE=$1
+
 message()
 {
   echo "run.sh: ${*}"
@@ -26,7 +28,7 @@ shutdown_daemon()
   echo "Killing: ${PID}"
   kill ${PID} || true
   sleep 1
-  kill -s KILL ${PID} || true 
+  kill -s KILL ${PID} || true
 }
 
 # Obtain daemon URI
@@ -43,8 +45,8 @@ fi
 echo "URI: ${URI}"
 
 # Start client
-if ! ${CLIENT} ${URI} f2.nxs 
-then 
+if ! ( cd /tmp ; ${CLIENT} ${URI} ${FILE} )
+then
   message "Client failed!"
 fi
 
