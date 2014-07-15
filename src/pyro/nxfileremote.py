@@ -20,32 +20,35 @@ def shutdown():
 class NXFileRemote:
     name = ""
     nexusFile = None
+    root = None
 
     def initfile(self, name):
         message("Initializing NXFileRemote: " + name)
         self.name = name
         try:
             self.nexusFile = NXFile(name, 'r')
+            self.root = nx.load(self.name)
         except Exception as e:
             message("Caught exception while opening: " + name)
             message("Exception message: " + str(e))
             return False
         return True
 
-    def getitem(self, key):
-        message("getitem")
-        t = nx.load(self.name)
-        message("t: " + str(t))
-        return str(t[key])
+    def getitem(self, path, key):
+        # have self.root
+        message("getitem inputs: " + str(path) + " " + str(key))
+        t = self.root[path][key]
+        message("getitem result: " + str(t))
+        return t
+
+    # def __getitem__(self, key):
+    #     # have self.root
+    #     print ("__getitem__: " + key)
 
     def tree(self):
-        # return self.nexusFile.readfile()
-        t = nx.load(self.name)
-        # message("t: " + str(t))
-        print "t.tree..."
-        print "t.tree: " , str(t)
-        # return array((1,2,3,4))
-        return t
+        print("tree...")
+        print "tree root: " , str(self.root)
+        return self.root
 
     def filename(self):
         return self.nexusFile.filename()

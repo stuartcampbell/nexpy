@@ -7,6 +7,8 @@ Dummy client for prototyping NexPyro
 import sys
 import Pyro4
 
+import numpy as np
+
 def message(msg):
     print("pyro client: " + str(msg))
 
@@ -32,12 +34,13 @@ try:
     t = fileremote.tree()
     message("t: " + str(t))
     message("nxname: " + t.nxname)
-    message("tree: " + t.tree)
+    # message("tree: " + t.tree)
+    message("entry: " + str(fileremote.getitem("/entry/data/v", np.s_[0:4,0:1,0:3])))
+
     message("data: " + str(t.entry.data.v))
     # message("data: " + str(t.entry.data["signal"]))
     message("value: " + str(t.entry.data.v._value))
     message("slab: " + str(t.entry.data.v[0,0,0]))
-    message("entry: " + fileremote.getitem("entry"))
     # print("name="+n)
     pass
 except Exception as e:
