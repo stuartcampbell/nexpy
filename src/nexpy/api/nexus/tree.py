@@ -356,6 +356,7 @@ class NXFile(object):
         root = self._readgroup()
         root._group = None
         root._filename = self.filename
+        root._file = self
         root._mode = self._mode
         return root
 
@@ -948,12 +949,12 @@ class NXobject(object):
                 root = NXroot(self)
             else:
                 root = NXroot(NXentry(self))
-            nx_file = NXFile(filename, mode)
-            nx_file.writefile(root)
-            root._filename = nx_file.file.filename
+            root._file = NXFile(filename, mode)
+            root._file.writefile(root)
+            root._filename = root._file.filename
             root._setattrs(nx_file._getattrs())
-            root._mode = nx_file._mode
-            nx_file.close()
+            root._mode = root._file._mode
+            root._file.close()
             for node in root.walk():
                 node._saved = True
             return root
@@ -1045,10 +1046,10 @@ class NXobject(object):
 
     def _getfile(self):
         _root = self.nxroot
-        if self._filename:
-            return NXFile(self._filename,_root._mode)
-        elif self.nxroot._filename:
-            return NXFile(self.nxroot._filename, _root._mode)
+        if _root._file:
+            return _root._file
+        elif _root._filename:
+            return NXFile(_root._filename, _root._mode)
         else:
             return None
 
