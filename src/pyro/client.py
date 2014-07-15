@@ -21,27 +21,30 @@ name = sys.argv[2]
 message("opening remote file: " + name)
 
 # Get a Pyro proxy to the remote object
+Pyro4.config.SERIALIZER = "pickle"
 fileremote = Pyro4.Proxy(uri)
+b = True
 
 # Use proxy object normally
-message(fileremote)
 try:
     b = fileremote.initfile(name)
     # n = fileremote.filename()
-    t = fileremote.tree()
-    message("tree: " + str(t))
+    # t = fileremote.tree()
+    # message("tree: " + str(t))
     # print("nxname: " + t.nxname)
     # print("entry: " + fileremote.getitem("entry"))
     # print("name="+n)
+    pass
 except Exception as e:
     print "Caught exception during remote file operations!"
     print("Exception message: " + str(e))
     b = False
-    
+
+message("Shutting down service...")
 fileremote.exit(0)
 if b:
     message("Success.")
-else: 
+else:
     message("Failed!")
     exit(1)
 exit(0)
