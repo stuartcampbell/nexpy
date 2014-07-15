@@ -8,7 +8,7 @@ import sys
 import Pyro4
 
 def message(msg):
-    print("client: " + str(msg))
+    print("pyro client: " + str(msg))
 
 if len(sys.argv) != 3:
     print "usage: client.py <URI> <FILENAME>"
@@ -31,9 +31,11 @@ try:
     # n = fileremote.filename()
     t = fileremote.tree()
     message("t: " + str(t))
+    message("nxname: " + t.nxname)
     message("tree: " + t.tree)
-    print("nxname: " + t.nxname)
-    print("entry: " + fileremote.getitem("entry"))
+    message("data: " + str(t.entry.data.signal.nxdata))
+    message("data: " + str(t.entry.data["signal"]))
+    message("entry: " + fileremote.getitem("entry"))
     # print("name="+n)
     pass
 except Exception as e:
