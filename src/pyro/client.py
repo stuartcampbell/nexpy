@@ -33,8 +33,10 @@ try:
     message("t: " + str(t))
     message("nxname: " + t.nxname)
     message("tree: " + t.tree)
-    message("data: " + str(t.entry.data.signal.nxdata))
-    message("data: " + str(t.entry.data["signal"]))
+    message("data: " + str(t.entry.data.v))
+    # message("data: " + str(t.entry.data["signal"]))
+    message("value: " + str(t.entry.data.v._value))
+    message("slab: " + str(t.entry.data.v[0,0,0]))
     message("entry: " + fileremote.getitem("entry"))
     # print("name="+n)
     pass
