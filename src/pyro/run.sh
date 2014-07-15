@@ -44,7 +44,7 @@ then
 fi
 echo "URI: ${URI}"
 
-# Start client
+# Start client in different directory (/tmp)
 if ! ( cd /tmp ; ${CLIENT} ${URI} ${FILE} )
 then
   message "Client failed!"
