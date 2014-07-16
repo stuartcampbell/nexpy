@@ -309,11 +309,13 @@ class NXFile(object):
             if mode == 'w5':
                 mode = 'w'
             self._file = h5.File(name, mode, **kwds)
+            self._filename = self._file.filename
             self._mode = 'rw'
         else:
             if mode == 'rw':
                 mode = 'r+'
             self._file = h5.File(name, mode, **kwds)
+            self._filename = self._file.filename
             if mode == 'rw' or mode == 'r+':
                 self._mode = 'rw'
             else:
@@ -333,6 +335,8 @@ class NXFile(object):
         del self._file[name]
 
     def __enter__(self):
+        if not self._file.id:
+            self._file = h5.File(self._filename, self._mode)
         return self
 
     def __exit__(self, *args):
@@ -559,7 +563,7 @@ class NXFile(object):
     @property
     def filename(self):
         """File name on disk"""
-        return self._file.filename
+        return self._filename
 
     def _getfile(self):
         return self._file
