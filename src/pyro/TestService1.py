@@ -37,9 +37,9 @@ service = TestService1()
 
 # Make an empty Pyro daemon
 Pyro4.config.SERIALIZERS_ACCEPTED.add("pickle")
-daemon = Pyro4.Daemon()
+daemon = Pyro4.Daemon(host=None, port=8080)
 # Register the object as a Pyro object
-uri = daemon.register(service)
+uri = daemon.register(service, 0)
 
 # Print the URI so we can use it in the client later
 print("URI: " + str(uri))
@@ -47,4 +47,5 @@ sys.stdout.flush()
 
 # Start the event loop of the server to wait for calls
 daemon.requestLoop()
+daemon.close()
 message("Daemon exited.")
