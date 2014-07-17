@@ -24,7 +24,15 @@ b = True
 # Use proxy object normally
 try:
     b = proxy.f1("hello")
-    pass
+    key1 = "key1"
+    value1 = proxy.getitem(key1)
+    message("got: %s:%s" % (key1, value1))
+    key2 = "key2"
+    value2 = proxy.__getitem__(key2)
+    message("got: %s:%s" % (key2, value2))
+    key3 = "key3"
+    value3 = proxy[key3]
+    message("got: %s:%s" % (key3, value3))
 except Exception as e:
     print "Caught exception during remote operations!"
     print("Exception message: " + str(e))
