@@ -46,7 +46,8 @@ try:
 except Exception as e:
     print "Caught exception during remote file operations!"
     print("Exception message: " + str(e))
-    b = False
+    print "Pyro remote traceback:"
+    print "".join(Pyro4.util.getPyroTraceback())
 
 message("Shutting down service...")
 fileremote.exit(0)
