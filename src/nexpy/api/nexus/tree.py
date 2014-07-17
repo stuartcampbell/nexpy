@@ -237,6 +237,8 @@ title is the title of the group or the parent :class:`NXentry`, if available.
 from __future__ import with_statement
 from copy import copy, deepcopy
 
+import os
+
 import numpy as np
 import h5py as h5
 
@@ -303,6 +305,7 @@ class NXFile(object):
         """
         Creates an h5py File object for reading and writing.
         """
+        print ("NXfile.__init__: " + name + " in: " + os.getcwd())
         if mode == 'w4' or mode == 'wx':
             raise NeXusError('Only HDF5 files supported')
         elif mode == 'w' or mode == 'w-' or mode == 'w5':
@@ -868,6 +871,28 @@ class NXobject(object):
                 for k in names:
                     result.append(entries[k]._str_name(indent=indent+2))
         return "\n".join(result)
+
+#     def __getstate__(self):
+#         print "NXobject.getstate()"
+#         result = self.__dict__.copy()
+#         return result
+# 
+#     def __setstate__(self, d):
+#         self.__dict__ = d
+
+
+    def __getstate__(self):
+        result = self.__dict__.copy()
+        hidden_keys = [key for key in result.keys() if key.startswith('_')]
+        needed_keys = ['_class', '_name', '_group', '_entries', '_attrs', 
+                       '_filename', '_mode', '_dtype', '_shape', '_value']
+        for key in hidden_keys:
+            if key not in needed_keys:
+                del result[key]
+        return result
+
+    def __setstate__(self, d):
+        self.__dict__ = d
 
     def update(self):
         pass
@@ -1477,6 +1502,7 @@ class NXfield(NXobject):
         self.set_changed()
 
     def _get_filedata(self, idx=()):
+        print("_get_filedata..." + str(self.nxfile))
         with self.nxfile as f:
             result = f[self.nxpath][idx]
             if 'mask' in self.attrs:
@@ -2299,12 +2325,12 @@ class NXgroup(NXobject):
     def _str_value(self,indent=0):
         return ""
 
-    def __getstate__(self):
-        print ""
-        print "NXgroup.__getstate__() ..."
-        state = self.getstate(0)
-        print "NXgroup.__getstate__() done."
-        return state 
+#     def __getstate__(self):
+#         print ""
+#         print "NXgroup.__getstate__() ..."
+#         state = self.getstate(0)
+#         print "NXgroup.__getstate__() done."
+#         return state 
  
     def spaces(self, spaces):
         import sys
@@ -2971,13 +2997,13 @@ class NXroot(NXgroup):
         self._class = "NXroot"
         NXgroup.__init__(self, *items, **opts)
 
-    def __getstate__(self):
-        print "NXroot.getstate(): " + str(id(self) % 1000)  
-        superState  = (super(self.__class__, self).__getstate__())
-        print "root: got state"
-        # = super.__getstate__()
-        print("superState: " + str(superState))
-        return [ "ROOT", superState ]
+#     def __getstate__(self):
+#         print "NXroot.getstate(): " + str(id(self) % 1000)  
+#         superState  = (super(self.__class__, self).__getstate__())
+#         print "root: got state"
+#         # = super.__getstate__()
+#         print("superState: " + str(superState))
+#         return [ "ROOT", superState ]
 
     def rename(self, name):
         self.nxname = name        
@@ -3319,14 +3345,15 @@ class NXdata(NXgroup):
                 result.errors = self.errors / other
             return result
 
-    def __getstate__(self):
-        return self.getstate(0)
-    
+#     def __getstate__(self):
+#         print "NXdata.getstate"
+#         return "X" # self.getstate(0)
+#      
     def getstate(self, depth):
         self.spaces(depth)
-        print "NXdata.getstate(%i)" % depth
-        return "NXdata:"+ self.nxpath + str(self.nxsignal.shape)
-
+        print "NXdata" # .getstate(%i)" % depth
+        return "NXdata:" # + self.nxpath + str(self.nxsignal.shape)
+     
 class NXmonitor(NXdata):
 
     """
