@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Dummy client for prototyping NexPyro
+Dummy client for prototyping Pyro
 """
 
 import sys
@@ -23,13 +23,17 @@ b = True
 
 # Use proxy object normally
 try:
+    # Works:
     b = proxy.f1("hello")
+    # Works:
     key1 = "key1"
     value1 = proxy.getitem(key1)
     message("got: %s:%s" % (key1, value1))
+    # Works:
     key2 = "key2"
     value2 = proxy.__getitem__(key2)
     message("got: %s:%s" % (key2, value2))
+    # Doesn't work:
     key3 = "key3"
     value3 = proxy[key3]
     message("got: %s:%s" % (key3, value3))
