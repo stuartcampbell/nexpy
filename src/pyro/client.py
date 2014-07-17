@@ -34,13 +34,15 @@ try:
     t = fileremote.tree()
     message("t: " + str(t))
     message("nxname: " + t.nxname)
-    # message("tree: " + t.tree)
-    message("entry: " + str(fileremote.getitem("/entry/data/v", np.s_[0:4,0:1,0:3])))
+    message("tree: " + t.tree)
+    # message("entry: " + str(fileremote.getitem("/entry/data/v", np.s_[0:4,0:1,0:3])))
 
     message("data: " + str(t.entry.data.v))
     # message("data: " + str(t.entry.data["signal"]))
     message("value: " + str(t.entry.data.v._value))
-    message("slab: " + str(t.entry.data.v[0,0,0]))
+    f = fileremote.__getitem__("/entry/data/v")
+    # f = fileremote["/entry/data/v"]
+    # message("slab: " + str(t.entry.data.v[0,0,0]))
     # print("name="+n)
     pass
 except Exception as e:
