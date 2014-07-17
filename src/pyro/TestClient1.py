@@ -19,10 +19,13 @@ uri = sys.argv[1]
 # Get a Pyro proxy to the remote object
 Pyro4.config.SERIALIZER = "pickle"
 proxy = Pyro4.Proxy(uri)
+proxy.__getitem____ = proxy.getitem
 b = True
 
 # Use proxy object normally
 try:
+    print proxy.__dict__
+    print dir(proxy)
     # Works:
     b = proxy.f1("hello")
     # Works:
