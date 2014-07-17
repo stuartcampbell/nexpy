@@ -1,14 +1,16 @@
 #!/bin/bash -eu
 
 NEXPYRO=$( cd $( dirname $0 ) ; /bin/pwd )
-DAEMON=${NEXPYRO}/nxfileservice.py
-CLIENT=${NEXPYRO}/nxfs-test.py
+# DAEMON=${NEXPYRO}/nxfileservice.py
+# CLIENT=${NEXPYRO}/client.py
+DAEMON=${NEXPYRO}/TestService1.py
+CLIENT=${NEXPYRO}/TestClient1.py
 
 NEXPY_SRC=$( cd ${NEXPYRO}/.. ; /bin/pwd )
 
 export PYTHONPATH=${NEXPY_SRC}
 
-FILE=$1
+ARGS=${*}
 
 message()
 {
@@ -45,7 +47,7 @@ fi
 echo "URI: ${URI}"
 
 # Start client in different directory (/tmp)
-if ! ( cd /tmp ; ${CLIENT} ${URI} ${FILE} )
+if ! ( cd /tmp ; ${CLIENT} ${URI} ${ARGS} )
 then
   message "Client failed!"
 fi
