@@ -21,6 +21,7 @@ class NXFileService:
     name = ""
     nexusFile = None
     root = None
+    path = None
 
     def initfile(self, name):
         message("Initializing NXFileService: " + name)
@@ -34,12 +35,18 @@ class NXFileService:
             return False
         return True
 
-    def getitem(self, path, key):
-        # have self.root
-        message("getitem inputs: " + str(path) + " " + str(key))
-        t = self.root[path][key]
+    def __getitem__(self, key):
+        message("getitem inputs: " + str(key))
+        if self.path == None:
+            self.path = key
+            t = self.root[self.path]
+        else:
+            t = self.root[self.path][key]
+            self.path = None
         message("getitem result: " + str(t))
         return t
+
+        # def
 
     # def __getitem__(self, key):
     #     # have self.root
