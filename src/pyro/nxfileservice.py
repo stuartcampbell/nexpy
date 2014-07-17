@@ -17,13 +17,13 @@ def shutdown():
     time.sleep(1)
     daemon.shutdown()
 
-class NXFileRemote:
+class NXFileService:
     name = ""
     nexusFile = None
     root = None
 
     def initfile(self, name):
-        message("Initializing NXFileRemote: " + name)
+        message("Initializing NXFileService: " + name)
         self.name = name
         try:
             self.nexusFile = NXFile(name, 'r')
@@ -63,13 +63,13 @@ class NXFileRemote:
         thread.setDaemon(True)
         thread.start()
 
-nxfileremote = NXFileRemote()
+nxfileservice = NXFileService()
 
 # Make an empty Pyro daemon
 Pyro4.config.SERIALIZERS_ACCEPTED.add("pickle")
 daemon = Pyro4.Daemon()
 # Register the object as a Pyro object
-uri = daemon.register(nxfileremote)
+uri = daemon.register(nxfileservice)
 
 # Print the URI so we can use it in the client later
 print("URI: " + str(uri))

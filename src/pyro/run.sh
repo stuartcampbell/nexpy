@@ -1,8 +1,8 @@
 #!/bin/bash -eu
 
 NEXPYRO=$( cd $( dirname $0 ) ; /bin/pwd )
-DAEMON=${NEXPYRO}/nxfileremote.py
-CLIENT=${NEXPYRO}/client.py
+DAEMON=${NEXPYRO}/nxfileservice.py
+CLIENT=${NEXPYRO}/nxfs-test.py
 
 NEXPY_SRC=$( cd ${NEXPYRO}/.. ; /bin/pwd )
 
