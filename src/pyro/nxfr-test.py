@@ -2,7 +2,7 @@
 
 import sys
 
-from nxfileservice import NXFileService
+from nxfileremote import NXFileRemote
 
 def message(msg):
     print("pyro test: " + str(msg))
