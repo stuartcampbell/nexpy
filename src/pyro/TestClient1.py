@@ -10,16 +10,19 @@ import Pyro4
 def message(msg):
     print("pyro client: " + str(msg))
 
-if len(sys.argv) != 2:
+if len(sys.argv) == 1:
+    uri = raw_input("Enter URI: ")
+elif len(sys.argv) == 2:
+    uri = sys.argv[1] 
+else:
     print "usage: client.py <URI>"
     exit(1)
-
-uri = sys.argv[1]
 
 # Get a Pyro proxy to the remote object
 Pyro4.config.SERIALIZER = "pickle"
 proxy = Pyro4.Proxy(uri)
-proxy.__getitem__ = proxy.getitem
+# Also tried this: 
+# proxy.__getitem__ = proxy.getitem
 b = True
 
 # Use proxy object normally

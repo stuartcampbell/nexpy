@@ -19,6 +19,7 @@ class TestService1:
         return True
 
     def __getitem__(self, key):
+        message("__getitem__")
         return self.getitem(key)
     
     def getitem(self, key):
