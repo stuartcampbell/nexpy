@@ -28,5 +28,8 @@ class NXFileRemote(NXFile):
     def __getitem__(self, key):
         return self._file.getitem(key)
 
+    def __enter__(self):
+        return self
+
     def __exit__(self, *args):
         self._file.exit(0)
