@@ -35,7 +35,9 @@ class NXFileService:
             return False
         return True
 
-    def __getitem__(self, key):
+    # We cannot expose __getitem__ via Pyro
+    # Cf. pyro-core mailing list, 7/20/2014    
+    def getitem(self, key):
         message("getitem inputs: " + str(key))
         if self.path == None:
             self.path = key
@@ -45,12 +47,6 @@ class NXFileService:
             self.path = None
         message("getitem result: " + str(t))
         return t
-
-        # def
-
-    # def __getitem__(self, key):
-    #     # have self.root
-    #     print ("__getitem__: " + key)
 
     def tree(self):
         print("tree...")
