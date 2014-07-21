@@ -26,7 +26,7 @@ class NXFileRemote(NXFile):
         assert(b)
 
     def __getitem__(self, key):
-        return self._file.__getitem__(key)
+        return self._file.getitem(key)
 
     def __exit__(self, *args):
         self._file.exit(0)
