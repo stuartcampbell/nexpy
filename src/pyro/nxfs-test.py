@@ -15,11 +15,11 @@ uri = sys.argv[1]
 name = sys.argv[2]
 message("opening remote file: " + name)
 
-with NXFileRemote(uri, name) as nxfs:
-    print("file: ") #  + str(nxfs._file))
-    f = nxfs["/entry/data/v"]
+with NXFileRemote(uri, name) as nxfr:
+    print("file: ") #  + str(nxfr._file))
+    f = nxfr["/entry/data/v"]
     f[0,0,0]
-    a = nxfs[("/entry/data/v",[0,0,0])]
+    a = nxfr[("/entry/data/v",[0,0,0])]
     # a[0,0,0] # local
-    t = nxfs[0,0,0] # remote
+    t = nxfr[0,0,0] # remote
     message("entry: " + str(t))
