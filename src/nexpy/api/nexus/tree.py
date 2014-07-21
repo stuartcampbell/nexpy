@@ -1502,7 +1502,7 @@ class NXfield(NXobject):
         self.set_changed()
 
     def _get_filedata(self, idx=()):
-        print("_get_filedata..." + str(self.nxfile))
+        # print("_get_filedata..." + str(self.nxfile))
         with self.nxfile as f:
             result = f[self.nxpath][idx]
             if 'mask' in self.attrs:
