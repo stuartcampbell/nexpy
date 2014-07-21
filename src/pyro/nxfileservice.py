@@ -8,8 +8,6 @@ import time
 import nexpy.api.nexus as nx
 from nexpy.api.nexus import NXFile
 
-from numpy import array
-
 def message(msg):
     print("pyro server: " + msg)
 
