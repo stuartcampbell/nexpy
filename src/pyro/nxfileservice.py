@@ -8,7 +8,13 @@ import time
 import nexpy.api.nexus as nx
 from nexpy.api.nexus import NXFile
 
-def message(msg):
+def msg(m):
+    print("pyro server: " + str(m))
+
+def msgv(m, v):
+    msg(m + ": " + str(v))
+
+def msg(msg):
     print("pyro server: " + msg)
 
 def shutdown():
@@ -22,28 +28,48 @@ class NXFileService:
     path = None
 
     def initfile(self, name):
-        message("Initializing NXFileService: " + name)
+        msg("Initializing NXFileService: " + name)
         self.name = name
         try:
             self.nexusFile = NXFile(name, 'r')
-            self.root = nx.load(self.name)
+            self.root = nx.load(self.name, close=False)
+            self.root._proxy = True
+            nx.setserver(True) 
         except Exception as e:
-            message("Caught exception while opening: " + name)
-            message("Exception message: " + str(e))
+            msg("Caught exception while opening: " + name)
+            msg("Exception msg: " + str(e))
             return False
         return True
 
     # We cannot expose __getitem__ via Pyro
-    # Cf. pyro-core mailing list, 7/20/2014    
+    # Cf. pyro-core mailing list, 7/20/2014
+    
     def getitem(self, key):
-        message("getitem inputs: " + str(key))
-        if self.path == None:
-            self.path = key
-            t = self.root[self.path]
-        else:
-            t = self.root[self.path][key]
-            self.path = None
-        message("getitem result: " + str(t))
+        msgv("getitem", key)
+        result = self.root[key]
+        msgv("result", result)
+        return result
+    
+    # Two-step call sequence
+    def getdata(self, key):
+        msgv("getdata", key)
+        try:
+            msg("get path: " + str(self.path))
+            if self.path == None:
+                self.path = key
+                msg("ok")
+                t = self.root[self.path]
+                msg("returning t")
+            else:
+                g = self.root[self.path]
+                print("g: " + str(g))
+                t = g[key]
+                self.path = None
+            msg("set path: " + str(self.path))
+        except Exception as e:
+            print("EXCEPTION in getitem(): " + str(e))
+            t = None
+        msg("getitem result: " + str(t))
         return t
 
     def tree(self):
@@ -59,7 +85,7 @@ class NXFileService:
         return True
 
     def exit(self,code):
-        message("Daemon exiting...")
+        msg("Daemon exiting...")
         thread = threading.Thread(target=shutdown)
         thread.setDaemon(True)
         thread.start()
@@ -78,4 +104,4 @@ sys.stdout.flush()
 
 # Start the event loop of the server to wait for calls
 daemon.requestLoop()
-message("Daemon exited.")
+msg("Daemon exited.")

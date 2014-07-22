@@ -21,8 +21,12 @@ class NXFileRemote(NXFile):
     def __init__(self, uri, name):
         # Get a Pyro proxy to the remote object
         Pyro4.config.SERIALIZER = "pickle"
-        self._file = Pyro4.Proxy(uri)
-        b = self._file.initfile(name)
+        message("proxy connect")
+        proxy = Pyro4.Proxy(uri)
+        message("proxy init")
+        b = proxy.initfile(name)
+        message("file init")
+        NXFile.__init__(self, name, proxy=proxy) 
         assert(b)
 
     def __getitem__(self, key):

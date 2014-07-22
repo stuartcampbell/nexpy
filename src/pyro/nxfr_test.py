@@ -4,9 +4,12 @@ import sys
 
 from nxfileremote import NXFileRemote
 
-def message(msg):
-    print("pyro test: " + str(msg))
+def msg(m):
+    print("pyro test: " + str(m))
 
+def msgv(m, v):
+    msg(m + ": " + str(v))
+    
 if len(sys.argv) == 1:
     name = raw_input("Enter file name: ")
     uri = raw_input("Enter URI: ")
@@ -17,16 +20,39 @@ elif len(sys.argv) == 3:
     uri  = sys.argv.pop()
     name = sys.argv.pop()
 else:
-    print "usage: client.py <NAME> <URI>?"
+    print "usage: client.py <NAME>? <URI>?"
     exit(1)
 
-message("opening remote file: " + name + " on URI: " + uri)
+msg("opening remote file: " + name + " on URI: " + uri)
+
+# Convenience: print test number
+test_count = 0
+def t(): 
+    global test_count
+    test_count += 1
+    print 
+    msgv("TEST", test_count)
 
 with NXFileRemote(uri, name) as nxfr:
     # print("file: ") #  + str(nxfr._file))
+    t()
     f = nxfr["/entry/data/v"]
-    f[0,0,0]
-    a = nxfr[("/entry/data/v",[0,0,0])]
-    # a[0,0,0] # local
-    t = nxfr[0,0,0] # remote
-    message("entry: " + str(t))
+    msgv("f", f)
+    t()
+    f = nxfr["/entry/data/v"]
+    msgv("f", f)
+    t()
+    v = f[0,0,0]
+    msgv("v", v)
+    t()
+    v = f[0,0]
+    msgv("v", v)
+    t()
+    v = nxfr["/entry/data/v"][0,0,0]
+    msgv("v", v)
+    t()
+    f1 = nxfr["/entry"]
+    msgv("f1", f1)
+    f2 = f1["data"]
+    msgv("f2", f2)
+    

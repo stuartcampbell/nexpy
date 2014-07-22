@@ -1,13 +1,15 @@
 #!/bin/bash -eu
 
 NEXPYRO=$( cd $( dirname $0 ) ; /bin/pwd )
-# DAEMON=${NEXPYRO}/nxfileservice.py
+DAEMON=${NEXPYRO}/nxfileservice.py
 # CLIENT=${NEXPYRO}/client.py
-DAEMON=${NEXPYRO}/TestService1.py
-CLIENT=${NEXPYRO}/TestClient1.py
+CLIENT=${NEXPYRO}/nxfr_test.py
+# DAEMON=${NEXPYRO}/TestService1.py
+# CLIENT=${NEXPYRO}/TestClient1.py
 
 NEXPY_SRC=$( cd ${NEXPYRO}/.. ; /bin/pwd )
 
+PYTHON="python -u"
 export PYTHONPATH=${NEXPY_SRC}
 
 ARGS=${*}
@@ -19,7 +21,8 @@ message()
 
 # Start daemon
 TMPFILE=$( mktemp )
-( ${DAEMON} | tee ${TMPFILE} 2>&1 ) &
+echo "TMPFILE=${TMPFILE}"
+( set -x ; ${PYTHON} ${DAEMON} | tee ${TMPFILE} | sed 's/^/S: /' 2>&1 ) &
 DAEMON_PID=${!}
 message "Daemon running: pid: ${DAEMON_PID}"
 # echo "DAEMON_PID: ${DAEMON_PID}"
@@ -47,11 +50,11 @@ fi
 echo "URI: ${URI}"
 
 # Start client in different directory (/tmp)
-if ! ( cd /tmp ; ${CLIENT} ${URI} ${ARGS} )
+if ! ( cd /tmp ; ${PYTHON} ${CLIENT} ${ARGS} ${URI} )
 then
   message "Client failed!"
 fi
 
-rm ${TMPFILE}
+# rm ${TMPFILE}
 wait
 exit 0

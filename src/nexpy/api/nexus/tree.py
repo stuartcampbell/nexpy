@@ -246,7 +246,7 @@ import h5py as h5
 NX_MEMORY = 2000
 
 __all__ = ['NXFile', 'NXobject', 'NXfield', 'NXgroup', 'NXattr', 'nxclasses',
-           'NX_MEMORY', 'setmemory', 'load', 'save', 'tree', 'centers',
+           'NX_MEMORY', 'setmemory', 'setserver', 'getserver', 'load', 'save', 'tree', 'centers',
            'NXlink', 'NXlinkfield', 'NXlinkgroup', 'SDS', 'NXlinkdata',
            'NeXusError']
 
@@ -265,6 +265,10 @@ nxclasses = [ 'NXroot', 'NXentry', 'NXsubentry', 'NXdata', 'NXmonitor', 'NXlog',
 
 np.set_printoptions(threshold=5)
 
+# Set to some proxy object if not using a local HDF file
+_global_proxy = None
+# True if this is a server process
+_global_server = False 
 
 class NeXusError(Exception):
     """NeXus Error"""
@@ -324,9 +328,23 @@ class NXFile(object):
             else:
                 self._mode = 'r'                                
         self._path = ''
+        if "proxy" in kwds:
+            print "NXfile is a Proxy!"
+            self._proxy = True
+            proxy = kwds["proxy"]
+            self._file = proxy
+            global _global_proxy
+            _global_proxy = proxy
+            print("_global_proxy: " + str(_global_proxy))
+            print("_file: " + str(self._file))
+            # r = self._file.getitem("entry")
+            # print ("r : " + str(r))
+            # print ("r.root")
 
     def __getitem__(self, key):
         """Returns an object from the NeXus file."""
+        print("NXfile.__getitem__(%s)" % key)
+        print("self._file: " + str(self._file))
         return self._file[key]
 
     def __setitem__(self, key, value):
@@ -350,6 +368,7 @@ class NXFile(object):
         self._file.copy(*args, **kwds)
 
     def close(self):
+        print("closing: " + str(self._file))
         self._file.close()
 
     def readfile(self):
@@ -359,6 +378,7 @@ class NXFile(object):
 
         Large datasets are not read until they are needed.
         """
+        print "NXFile.readfile"
         self.nxpath = '/'
         root = self._readgroup()
         root._group = None
@@ -814,6 +834,7 @@ class NXobject(object):
     _uncopied_data = None
     _saved = False
     _changed = True
+    _proxy = False
 
     def __str__(self):
         return "%s:%s"%(self.nxclass,self.nxname)
@@ -885,7 +906,7 @@ class NXobject(object):
         result = self.__dict__.copy()
         hidden_keys = [key for key in result.keys() if key.startswith('_')]
         needed_keys = ['_class', '_name', '_group', '_entries', '_attrs', 
-                       '_filename', '_mode', '_dtype', '_shape', '_value']
+                       '_filename', '_mode', '_dtype', '_shape', '_value', '_proxy']
         for key in hidden_keys:
             if key not in needed_keys:
                 del result[key]
@@ -1075,11 +1096,19 @@ class NXobject(object):
 
     def _getfile(self):
         _root = self.nxroot
+        print ("_getfile _root: " + str(_root))
+        print ("_getfile _root._proxy: " + str(_root._proxy))
+        print ("_global_server: " + str(getserver()))
+        if _root._proxy and not getserver():
+            return "proxy"
         if _root._file:
+            print("if1 ...")
             return _root._file
         elif _root._filename:
+            print("if2 ...")
             return NXFile(_root._filename, _root._mode)
         else:
+            print("if3 ...")
             return None
 
     def _getfilename(self):
@@ -1502,8 +1531,9 @@ class NXfield(NXobject):
         self.set_changed()
 
     def _get_filedata(self, idx=()):
-        # print("_get_filedata..." + str(self.nxfile))
-        with self.nxfile as f:
+        print("_get_filedata...")
+        f = self.nxfile
+        if not "proxy" == f:
             result = f[self.nxpath][idx]
             if 'mask' in self.attrs:
                 try:
@@ -1511,7 +1541,15 @@ class NXfield(NXobject):
                     result = np.ma.array(result, mask=f[mask.nxpath][idx])
                 except KeyError:
                     pass
-        return result
+        else: 
+            print("_get_filedata: proxy: " + str(_global_proxy))
+            p = self.nxpath
+            print("path: " + str(p))
+            print("idx: " + str(idx))
+            result = _global_proxy.getdata(p)
+            result = _global_proxy.getdata(idx)
+            print("result: " + str(result))
+        return result   
 
     def _put_filedata(self, idx, value):
         with self.nxfile as f:
@@ -1869,7 +1907,7 @@ class NXfield(NXobject):
                 return ''.join(self._value)
             else:
                 return str(self._value)
-        return ""
+        return "NXfield (unloaded)"
 
     def _str_value(self,indent=0):
         v = str(self)
@@ -2424,6 +2462,8 @@ class NXgroup(NXobject):
         real-space slicing should only be used on monotonically increasing (or
         decreasing) one-dimensional arrays.
         """
+        
+        
         if isinstance(idx, NXattr):
             idx = idx.nxdata
         if isinstance(idx, basestring): #i.e., requesting a dictionary value
@@ -3476,16 +3516,27 @@ def setmemory(value):
     global NX_MEMORY
     NX_MEMORY = value
 
+def setserver(value):
+    global _global_server
+    _global_server = value
+    
+def getserver():
+    global _global_server
+    return _global_server 
+
 # File level operations
-def load(filename, mode='r'):
+def load(filename, mode='r', close=True):
     """
     Reads a NeXus file returning a tree of objects.
 
     This is aliased to 'nxload' because of potential name clashes with Numpy
     """
+    print "nx.load()..."
     file = NXFile(filename, mode)
     tree = file.readfile()
-    file.close()
+    if close:
+        file.close()
+    print "nx.load done."
     return tree
 
 #Definition for when there are name clashes with Numpy
