@@ -22,7 +22,7 @@ message()
 # Start daemon
 TMPFILE=$( mktemp )
 echo "TMPFILE=${TMPFILE}"
-( set -x ; ${PYTHON} ${DAEMON} | tee ${TMPFILE} | sed 's/^/S: /' 2>&1 ) &
+( ${PYTHON} ${DAEMON} | tee ${TMPFILE} | sed 's/^/S: /' 2>&1 ) &
 DAEMON_PID=${!}
 message "Daemon running: pid: ${DAEMON_PID}"
 # echo "DAEMON_PID: ${DAEMON_PID}"
