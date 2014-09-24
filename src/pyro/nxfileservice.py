@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+"""
+Daemon process presenting NeXus file over Pyro
+"""
+
+
 import Pyro4
 import sys
 import threading
@@ -8,14 +13,11 @@ import time
 import nexpy.api.nexus as nx
 from nexpy.api.nexus import NXFile
 
-def msg(m):
-    print("pyro server: " + str(m))
+def msg(msg):
+    print("pyro server: " + msg)
 
 def msgv(m, v):
     msg(m + ": " + str(v))
-
-def msg(msg):
-    print("pyro server: " + msg)
 
 def shutdown():
     time.sleep(1)
@@ -31,6 +33,7 @@ class NXFileService:
         msg("Initializing NXFileService: " + name)
         self.name = name
         try:
+            msgv("opening", name)
             self.nexusFile = NXFile(name, 'r')
             self.root = nx.load(self.name, close=False)
             self.root._proxy = True
