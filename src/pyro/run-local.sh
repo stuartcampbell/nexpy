@@ -1,5 +1,8 @@
 #!/bin/bash -eu
 
+# RUN-LOCAL
+# Run a client/server connection locally
+
 NEXPYRO=$( cd $( dirname $0 ) ; /bin/pwd )
 DAEMON=${NEXPYRO}/nxfileservice.py
 # CLIENT=${NEXPYRO}/client.py
