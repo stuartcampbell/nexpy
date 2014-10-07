@@ -25,8 +25,12 @@ class NXFileRemote(NXFile):
         proxy = Pyro4.Proxy(uri)
         message("proxy init")
         b = proxy.initfile(name)
+        if b != True:
+            print "\nERROR OCCURRED IN SERVICE"
+            print b
+            return
         message("file init")
-        NXFile.__init__(self, name, proxy=proxy) 
+        NXFile.__init__(self, name, proxy=proxy)
         assert(b)
 
     def __getitem__(self, key):
