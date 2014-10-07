@@ -25,7 +25,7 @@ def shutdown():
     daemon.shutdown()
 
 # Use automated port number by default
-port = 0 
+port = 0
 if len(sys.argv) > 1:
     port = int(sys.argv[1])
 
@@ -45,22 +45,23 @@ class NXFileService:
             self.nexusFile = NXFile(name, 'r')
             self.root = nx.load(self.name) # , close=False
             self.root._proxy = True
-            nx.setserver(True) 
+            nx.setserver(True)
         except Exception as e:
-            msg("Caught exception while opening: " + name)
-            msg("Exception msg: " + str(e))
-            return False
+            m = "Caught exception while opening: " + name + "\n" + \
+                "Exception msg: " + str(e)
+            msg(m)
+            return m
         return True
 
     # We cannot expose __getitem__ via Pyro
     # Cf. pyro-core mailing list, 7/20/2014
-    
+
     def getitem(self, key):
         msgv("getitem", key)
         result = self.root[key]
         msgv("result", result)
         return result
-    
+
     # Two-step call sequence
     def getdata(self, key):
         msgv("getdata", key)
@@ -107,7 +108,7 @@ nxfileservice = NXFileService()
 Pyro4.config.SERIALIZERS_ACCEPTED.add("pickle")
 daemon = Pyro4.Daemon(port=port)
 # Register the object as a Pyro object in the daemon
-# We set the objectId to the user name 
+# We set the objectId to the user name
 # This means a user can only have 1 daemon object
 uri = daemon.register(nxfileservice, objectId=whoami)
 
