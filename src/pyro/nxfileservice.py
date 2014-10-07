@@ -4,11 +4,12 @@
 Daemon process presenting NeXus file over Pyro
 """
 
-
-import Pyro4
+import os
 import sys
 import threading
 import time
+
+import Pyro4
 
 import nexpy.api.nexus as nx
 from nexpy.api.nexus import NXFile
@@ -23,6 +24,13 @@ def shutdown():
     time.sleep(1)
     daemon.shutdown()
 
+# Use automated port number by default
+port = 0 
+if len(sys.argv) > 1:
+    port = int(sys.argv[1])
+
+whoami = os.environ["USER"]
+
 class NXFileService:
     name = ""
     nexusFile = None
@@ -35,7 +43,7 @@ class NXFileService:
         try:
             msgv("opening", name)
             self.nexusFile = NXFile(name, 'r')
-            self.root = nx.load(self.name, close=False)
+            self.root = nx.load(self.name) # , close=False
             self.root._proxy = True
             nx.setserver(True) 
         except Exception as e:
@@ -97,9 +105,11 @@ nxfileservice = NXFileService()
 
 # Make an empty Pyro daemon
 Pyro4.config.SERIALIZERS_ACCEPTED.add("pickle")
-daemon = Pyro4.Daemon()
-# Register the object as a Pyro object
-uri = daemon.register(nxfileservice)
+daemon = Pyro4.Daemon(port=port)
+# Register the object as a Pyro object in the daemon
+# We set the objectId to the user name 
+# This means a user can only have 1 daemon object
+uri = daemon.register(nxfileservice, objectId=whoami)
 
 # Print the URI so we can use it in the client later
 print("URI: " + str(uri))
