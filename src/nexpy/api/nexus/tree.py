@@ -310,6 +310,21 @@ class NXFile(object):
         Creates an h5py File object for reading and writing.
         """
         print ("NXfile.__init__: " + name + " in: " + os.getcwd())
+
+        if "proxy" in kwds:
+            print "NXfile is a Proxy!"
+            self._proxy = True
+            proxy = kwds["proxy"]
+            self._file = proxy
+            global _global_proxy
+            _global_proxy = proxy
+            print("_global_proxy: " + str(_global_proxy))
+            print("_file: " + str(self._file))
+            # r = self._file.getitem("entry")
+            # print ("r : " + str(r))
+            # print ("r.root")
+            return
+
         if mode == 'w4' or mode == 'wx':
             raise NeXusError('Only HDF5 files supported')
         elif mode == 'w' or mode == 'w-' or mode == 'w5':
@@ -328,18 +343,6 @@ class NXFile(object):
             else:
                 self._mode = 'r'                                
         self._path = ''
-        if "proxy" in kwds:
-            print "NXfile is a Proxy!"
-            self._proxy = True
-            proxy = kwds["proxy"]
-            self._file = proxy
-            global _global_proxy
-            _global_proxy = proxy
-            print("_global_proxy: " + str(_global_proxy))
-            print("_file: " + str(self._file))
-            # r = self._file.getitem("entry")
-            # print ("r : " + str(r))
-            # print ("r.root")
 
     def __getitem__(self, key):
         """Returns an object from the NeXus file."""
