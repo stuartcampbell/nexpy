@@ -1,9 +1,10 @@
 #!/bin/bash -eu
 
-# RUN-LOCAL
-# Run a client/server connection locally
+# RUN-SSH
+# Run a client/server connection over SSH
 
 NEXPYRO=$( cd $( dirname $0 ) ; /bin/pwd )
+# Note: This is a remote path
 DAEMON=${NEXPYRO}/nxfileservice.py
 # CLIENT=${NEXPYRO}/client.py
 CLIENT=${NEXPYRO}/nxfr_test.py
@@ -15,6 +16,9 @@ NEXPY_SRC=$( cd ${NEXPYRO}/.. ; /bin/pwd )
 PYTHON="python -u"
 export PYTHONPATH=${NEXPY_SRC}
 
+HOST=$1
+shift
+
 ARGS=${*}
 
 message()
@@ -25,7 +29,7 @@ message()
 # Start daemon
 TMPFILE=$( mktemp )
 echo "TMPFILE=${TMPFILE}"
-( ${PYTHON} ${DAEMON} | tee ${TMPFILE} | sed 's/^/S: /' 2>&1 ) &
+( ssh ${HOST} ${PYTHON} ${DAEMON} | tee ${TMPFILE} | sed 's/^/S: /' 2>&1 ) &
 DAEMON_PID=${!}
 message "Daemon running: pid: ${DAEMON_PID}"
 # echo "DAEMON_PID: ${DAEMON_PID}"
