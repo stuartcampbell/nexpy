@@ -38,6 +38,7 @@ setup (name =  nexpy.__package_name__,        # NeXpy
        url=nexpy.__url__,
        download_url=nexpy.__download_url__,
        platforms='any',
+       setup_requires = nexpy.requires.pkg_requirements,
        install_requires = nexpy.requires.pkg_requirements,
        extras_require = nexpy.requires.extra_requirements,
        package_dir = {'': 'src'},
