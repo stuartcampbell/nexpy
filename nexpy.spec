@@ -12,6 +12,7 @@ URL:            https://nexpy.github.io/nexpy/
 Source0:        https://github.com/nexpy/nexpy/archive/v%{version}.zip
 
 Requires:       python-nexusformat
+Requires:	python-matplotlib >= 1.4.0
 
 
 %description
